@@ -1,0 +1,74 @@
+name: CI
+
+on: [ pull_request ]
+
+jobs:
+  host_normal:
+    runs-on: windows-2022
+    steps:
+      - name: Build examples
+        run: |
+          cd host_toolchain
+          bazel test //...
+          echo -e "\nSecond Run\n"
+          bazel test //...
+
+  host_nolegacy_runfiles:
+    runs-on: windows-2022
+    steps:
+      - name: Build examples
+        run: |
+          cd host_toolchain
+          bazel test --nolegacy_external_runfiles //...
+          echo -e "\nSecond Run\n"
+          bazel test --nolegacy_external_runfiles //...
+
+  host_non_hermetic:
+    runs-on: windows-2022
+    steps:
+      - name: Build examples
+        run: |
+          cd host_toolchain
+          bazel test --spawn_strategy=local //...
+          echo -e "\nSecond Run\n"
+          bazel test --spawn_strategy=local //...
+
+  toolchain_normal:
+    runs-on: windows-2022
+    steps:
+      - name: Build examples
+        run: |
+          cd hermetic_toolchain
+          bazel test //...
+          echo -e "\nSecond Run\n"
+          bazel test //...
+
+  toolchain_nolegacy_runfiles:
+    runs-on: windows-2022
+    steps:
+      - name: Build examples
+        run: |
+          cd hermetic_toolchain
+          bazel test --nolegacy_external_runfiles //...
+          echo -e "\nSecond Run\n"
+          bazel test --nolegacy_external_runfiles //...
+
+  toolchain_non_hermetic:
+    runs-on: windows-2022
+    steps:
+      - name: Build examples
+        run: |
+          cd hermetic_toolchain
+          bazel test --spawn_strategy=local //...
+          echo -e "\nSecond Run\n"
+          bazel test --spawn_strategy=local //...
+
+  toolchain_nolegacy_runfile_non_hermetic:
+    runs-on: windows-2022
+    steps:
+      - name: Build examples
+        run: |
+          cd hermetic_toolchain
+          bazel test --nolegacy_external_runfiles --spawn_strategy=local //...
+          echo -e "\nSecond Run\n"
+          bazel test --nolegacy_external_runfiles --spawn_strategy=local //...
