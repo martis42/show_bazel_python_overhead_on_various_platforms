@@ -1,0 +1,4 @@
+common --noenable_bzlmod
+common --experimental_convenience_symlinks=clean
+
+test --test_output=all
