@@ -69,7 +69,10 @@ jobs:
           bazel test --nocache_test_results --nolegacy_external_runfiles //...
 
   toolchain_non_hermetic:
-    runs-on: windows-2022
+    strategy:
+      matrix:
+        os: [ ubuntu-22.04, macos-12, windows-2022 ]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - name: Build examples
