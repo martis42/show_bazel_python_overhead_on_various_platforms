@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build examples
-        run: python run_benchmark.py host_toolchain --extra_args windows_enable_symlinks
+        run: python run_benchmark.py host_toolchain --extra_startup_args windows_enable_symlinks
 
   host_nolegacy_runfiles:
     strategy:
@@ -55,7 +55,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build examples
-        run: python run_benchmark.py hermetic_toolchain --extra_args windows_enable_symlinks
+        run: python run_benchmark.py hermetic_toolchain --extra_startup_args windows_enable_symlinks
 
   toolchain_nolegacy_runfiles:
     strategy:
