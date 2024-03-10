@@ -25,19 +25,34 @@ def extract_benchmark_time(process: subprocess.CompletedProcess) -> float:
     return float(elapsed_time_match[0])
 
 
+def run_benchmark_step(workspace: str, extra_args: list[str], is_retest: bool) -> float:
+    retest_arg = ["--nocache_test_results"] if is_retest else []
+    cmd = ["bazel", "test"] + retest_arg + extra_args + ["//..."]
+    process = subprocess.run(cmd, cwd=workspace, check=False, capture_output=True, text=True)
+    if process.returncode != 0:
+        print(f"ERROR: Command failed '{cmd}'")
+        print("===  stdout  ===")
+        print(process.stdout)
+        print("================")
+        print("===  stderr  ===")
+        print(process.stderr)
+        print("================")
+        sys.exit(1)
+    return extract_benchmark_time(process)
+
+
 def run_benchmark(workspace: str, extra_args: list[str]) -> BenchmarkResult:
+    print(">>> Ensure all external deps are cached locally and show Python version\n")
+    setup_cmd = ["bazel", "test"] + extra_args + ["some_test_0"]
+    subprocess.run(setup_cmd, cwd=workspace, check=True)
+
     print("\n>>> Ensure no cached results or runfile trees exist")
     subprocess.run(["bazel", "clean"], cwd=workspace, check=True, capture_output=True)
 
     print("\n>>> Run benchmark\n")
-    clean_cmd = ["bazel", "test"] + extra_args + ["//..."]
-    process = subprocess.run(clean_cmd, cwd=workspace, check=True, capture_output=True, text=True)
-    clean_time = extract_benchmark_time(process)
+    clean_time = run_benchmark_step(workspace=workspace, extra_args=extra_args, is_retest=False)
     print(f"Clean time: {clean_time}")
-
-    retest_cmd = ["bazel", "test", "--nocache_test_results"] + extra_args + ["//..."]
-    process = subprocess.run(retest_cmd, cwd=workspace, check=True, capture_output=True, text=True)
-    retest_time = extract_benchmark_time(process)
+    retest_time = run_benchmark_step(workspace=workspace, extra_args=extra_args, is_retest=False)
     print(f"Retest time: {retest_time}")
 
     return BenchmarkResult(clean_time=clean_time,retest_time=retest_time)
@@ -65,9 +80,6 @@ def analyze_results(values: list[BenchmarkResult]):
 
 
 def main(workspace: str, extra_args: list[str]):
-    print(">>> Ensure all external deps are cached locally and show Python version\n")
-    subprocess.run(["bazel", "test", "some_test_0"], cwd=workspace, check=True)
-
     benchmark_times = [run_benchmark(workspace=workspace, extra_args=extra_args) for _ in range(0, BENCHMARK_RUNS)]
     analyze_results(benchmark_times)
 

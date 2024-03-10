@@ -13,6 +13,13 @@ jobs:
       - name: Build examples
         run: python run_benchmark.py host_toolchain
 
+  host_normal_windows_symlinks:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build examples
+        run: python run_benchmark.py host_toolchain --extra_args windows_enable_symlinks
+
   host_nolegacy_runfiles:
     strategy:
       matrix:
@@ -44,10 +51,7 @@ jobs:
         run: python run_benchmark.py hermetic_toolchain
 
   toolchain_windows_symlinks:
-    strategy:
-      matrix:
-        os: [ ubuntu-22.04, macos-12, windows-2022 ]
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v4
       - name: Build examples
