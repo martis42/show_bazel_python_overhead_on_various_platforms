@@ -6,5 +6,5 @@ load("@rules_python//python:defs.bzl", "py_test")
         srcs = ["some_test.py"],
         main = "some_test.py",
     )
-    for x in range(0, 50)
+    for x in range(0, 100)
 ]
