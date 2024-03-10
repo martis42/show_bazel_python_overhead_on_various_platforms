@@ -84,7 +84,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    bazel_extra_args = [f"--{bazel_arg}" for bazel_arg in args.extra_args] if args.extra_args else []
-    bazel_extra_startup_args = [f"--{bazel_arg}" for bazel_arg in args.extra_args] if args.extra_args else []
+    bazel_extra_args = [f"--{arg}" for arg in args.extra_args] if args.extra_args else []
+    bazel_extra_startup_args = [f"--{arg}" for arg in args.extra_startup_args] if args.extra_startup_args else []
 
     run_benchmark(workspace=args.workspace, extra_args=bazel_extra_args, extra_startup_args=bazel_extra_startup_args)
